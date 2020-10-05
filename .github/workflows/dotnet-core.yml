@@ -27,17 +27,7 @@ jobs:
       
     - name: Setup Nuget.exe
       uses: warrenbuckley/Setup-Nuget@v1
-        
-    - name: Nuget Restore 
-      run: nuget restore .\LandscapeInstitute.API.Client.Core.sln
-
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.1
-
-    - name: Name Release
-      run:  msbuild .\LandscapeInstitute.API.Client.Core/LandscapeInstitute.API.Client.Core.csproj  /p:Configuration=Release         
-      
-      
+       
     - name: Setup .NET Core @ Latest
       uses: actions/setup-dotnet@v1
       with:
@@ -46,9 +36,14 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}        
 
     - name: Build solution and generate NuGet package
-      run: |  
-        cd LandscapeInstitute.API.Client.Core
-        dotnet pack -c Release -o out  
+      run: dotnet nuget add source https://nuget.pkg.github.com/landscapeInstitute/index.json -n github -u landscapeInstitute -p ${{secrets.GITHUB_TOKEN}}
 
     - name: Push generated package to GitHub registry
-      run: dotnet nuget push .\LandscapeInstitute.API.Client.Core\bin\Release\*.nupkg --skip-duplicate --no-symbols true
+      run: dotnet nuget push .\LandscapeInstitute.API.Client.Core\bin\Release\*.nupkg --skip-duplicate --no-symbols true --api-key  ${{secrets.NUGET}}  --source "github"   
+      
+      
+
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget push .\LandscapeInstitute.API.Client.Core\bin\Release\*.nupkg --skip-duplicate --no-symbols true --api-key  ${{secrets.NUGET}}  --source "github"   
+      
+      
