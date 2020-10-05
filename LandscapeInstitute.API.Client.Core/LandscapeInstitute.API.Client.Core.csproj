@@ -9,8 +9,8 @@
     <Revision>$([MSBuild]::Divide($([System.DateTime]::get_Now().get_TimeOfDay().get_TotalSeconds()), 2).ToString('F0'))</Revision>
     <Version>1.0.$(Build).$(Revision)</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageDescription>A simple API Client for the Landscape Institute API</PackageDescription>
-    <RepositoryUrl>https://www.nuget.org/packages/LandscapeInstitute.API.Client.Core</RepositoryUrl>
+    <PackageDescription>An internal client for the Landscape Institute API for use in various websites </PackageDescription>
+    <RepositoryUrl>https://github.com/landscapeInstitute/LandscapeInstitute.API.Client.Core</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
