@@ -10,7 +10,7 @@
     <Version>1.0.$(Build).$(Revision)</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageDescription>A simple API Client for the Landscape Institute API</PackageDescription>
-    <RepositoryUrl>https://github.com/landscapeInstitute/LandscapeInstitute.API.Client.Core</RepositoryUrl>
+    <RepositoryUrl>https://www.nuget.org/packages/LandscapeInstitute.API.Client.Core</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
