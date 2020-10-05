@@ -51,7 +51,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "namespace LandscapeInstitute.WebAPI.Client",
+      "namespace": "LandscapeInstitute.WebAPI.Client",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
