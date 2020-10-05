@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
-namespace LandscapeInstitute.IdentityServer.Core.LandscapeClient
+namespace LandscapeInstitute.WebAPI.Client
 {
 
     public partial class APIException : System.Exception

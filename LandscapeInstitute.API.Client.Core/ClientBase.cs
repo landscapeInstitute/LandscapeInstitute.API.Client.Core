@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace LandscapeInstitute.IdentityServer.Core.LandscapeClient
+namespace LandscapeInstitute.WebAPI.Client
 {
 
     public enum ClientAuthenticationType
