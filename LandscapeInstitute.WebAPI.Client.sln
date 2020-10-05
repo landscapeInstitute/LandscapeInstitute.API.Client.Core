@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LandscapeInstitute.API.Client.Core", "LandscapeInstitute.API.Client.Core\LandscapeInstitute.API.Client.Core.csproj", "{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = " LandscapeInstitute.WebAPI.Client", "LandscapeInstitute.WebAPI.Client\LandscapeInstitute.WebAPI.Client.csproj", "{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

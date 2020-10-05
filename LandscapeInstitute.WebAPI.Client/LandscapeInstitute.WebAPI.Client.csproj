@@ -10,7 +10,7 @@
     <Version>1.0.$(Build).$(Revision)</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageDescription>An internal client for the Landscape Institute API for use in various websites </PackageDescription>
-    <RepositoryUrl>https://github.com/landscapeInstitute/LandscapeInstitute.API.Client.Core</RepositoryUrl>
+    <RepositoryUrl>https://github.com/landscapeInstitute/LandscapeInstitute.WebAPI.Client</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
