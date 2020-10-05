@@ -6,6 +6,8 @@
     <Authors>Louis Varley</Authors>
     <Company>Landscape Institute</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageDescription>A simple API Client for the Landscape Institute API</PackageDescription>
+    <RepositoryUrl>https://github.com/landscapeInstitute/LandscapeInstitute.API.Client.Core</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
