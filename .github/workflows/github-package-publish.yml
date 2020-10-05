@@ -1,0 +1,40 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on:  windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+        
+    - name: Install dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+      
+    - name: Setup Nuget.exe
+      uses: warrenbuckley/Setup-Nuget@v1
+       
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget add source https://nuget.pkg.github.com/landscapeInstitute/index.json -n github -u landscapeInstitute -p ${{secrets.GITHUB_TOKEN}}       
+
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget push .\LandscapeInstitute.API.Client.Core\bin\Release\*.nupkg --skip-duplicate --no-symbols true --api-key  ${{secrets.GITHUB_TOKEN}}  --source "github"   
+      
+
+      
