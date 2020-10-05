@@ -24,12 +24,10 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       
-      
     - name: Setup Nuget.exe
       uses: warrenbuckley/Setup-Nuget@v1
        
-
-   - name: Push generated package to GitHub registry
+    - name: Push generated package to GitHub registry
       run: dotnet nuget add source https://nuget.pkg.github.com/landscapeInstitute/index.json -n github -u landscapeInstitute -p ${{secrets.GITHUB_TOKEN}}       
 
     - name: Push generated package to GitHub registry
