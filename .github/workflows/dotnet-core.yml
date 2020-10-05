@@ -28,12 +28,9 @@ jobs:
     - name: Setup Nuget.exe
       uses: warrenbuckley/Setup-Nuget@v1
        
-    - name: Setup .NET Core @ Latest
-      uses: actions/setup-dotnet@v1
-      with:
-        source-url: https://nuget.pkg.github.com/landscapeinstitute/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}        
+
+   - name: Push generated package to GitHub registry
+      run: dotnet nuget add source https://nuget.pkg.github.com/landscapeInstitute/index.json -n github -u landscapeInstitute -p ${{secrets.GITHUB_TOKEN}}       
 
     - name: Push generated package to GitHub registry
       run: dotnet nuget push .\LandscapeInstitute.API.Client.Core\bin\Release\*.nupkg --skip-duplicate --no-symbols true --api-key  ${{secrets.NUGET}}  --source "github"   
