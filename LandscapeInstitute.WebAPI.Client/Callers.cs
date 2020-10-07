@@ -15,12 +15,12 @@ namespace LandscapeInstitute.WebAPI.Client
     using System = global::System;
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.1.3.0 (NJsonSchema v10.0.27.0 (Newtonsoft.Json v12.0.0.0))")]
-    internal partial class AppsCaller : ClientBase
+    internal partial class AuthenticationCaller : ClientBase
     {
         private string _baseUrl = "";
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public AppsCaller(string baseUrl)
+        public AuthenticationCaller(string baseUrl)
         {
             BaseUrl = baseUrl; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
@@ -44,20 +44,22 @@ namespace LandscapeInstitute.WebAPI.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
+        /// <summary>(Auth policies: Admin)</summary>
         /// <returns>Success</returns>
         /// <exception cref="APIException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<OAuthApp> AppsAsync(string clientId)
+        public System.Threading.Tasks.Task<OAuthApp> AppAsync(string clientId)
         {
-            return AppsAsync(clientId, System.Threading.CancellationToken.None);
+            return AppAsync(clientId, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>(Auth policies: Admin)</summary>
         /// <returns>Success</returns>
         /// <exception cref="APIException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<OAuthApp> AppsAsync(string clientId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<OAuthApp> AppAsync(string clientId, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Apps/{clientId}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Authentication/App/{clientId}");
             urlBuilder_.Replace("{clientId}", System.Uri.EscapeDataString(ConvertToString(clientId, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = new System.Net.Http.HttpClient();
@@ -111,6 +113,181 @@ namespace LandscapeInstitute.WebAPI.Client
                         }
             
                         return default(OAuthApp);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (client_ != null)
+                    client_.Dispose();
+            }
+        }
+    
+        /// <summary>Validate an Email Address and Password to a contact (Auth policies: Admin)</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="APIException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<Contact> ValidateAsync(string emailAddress, string password)
+        {
+            return ValidateAsync(emailAddress, password, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Validate an Email Address and Password to a contact (Auth policies: Admin)</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="APIException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<Contact> ValidateAsync(string emailAddress, string password, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Authentication/Validate?");
+            if (emailAddress != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("emailAddress") + "=").Append(System.Uri.EscapeDataString(ConvertToString(emailAddress, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (password != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("password") + "=").Append(System.Uri.EscapeDataString(ConvertToString(password, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = new System.Net.Http.HttpClient();
+            try
+            {
+                using (var request_ = await CreateHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<Contact>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new APIException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new APIException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new APIException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(Contact);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (client_ != null)
+                    client_.Dispose();
+            }
+        }
+    
+        /// <summary>Return the contact currently authenticated with an access token (Auth policies: User)</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="APIException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<Contact> MeAsync()
+        {
+            return MeAsync(System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Return the contact currently authenticated with an access token (Auth policies: User)</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="APIException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<Contact> MeAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Authentication/Me");
+    
+            var client_ = new System.Net.Http.HttpClient();
+            try
+            {
+                using (var request_ = await CreateHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<Contact>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new APIException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new APIException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new APIException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(Contact);
                     }
                     finally
                     {
@@ -251,22 +428,18 @@ namespace LandscapeInstitute.WebAPI.Client
     
         /// <returns>Success</returns>
         /// <exception cref="APIException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Contact> ContactsAsync(System.Guid id)
+        public System.Threading.Tasks.Task<Contact> GetWebTokenAsync()
         {
-            return ContactsAsync(id, System.Threading.CancellationToken.None);
+            return GetWebTokenAsync(System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="APIException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<Contact> ContactsAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<Contact> GetWebTokenAsync(System.Threading.CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-    
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Contacts/{id}");
-            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Contacts/GetWebToken");
     
             var client_ = new System.Net.Http.HttpClient();
             try
@@ -298,189 +471,6 @@ namespace LandscapeInstitute.WebAPI.Client
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Contact>(response_, headers_).ConfigureAwait(false);
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == "401") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new APIException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
-                        if (status_ == "403") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new APIException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
-                        if (status_ != "200" && status_ != "204")
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new APIException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
-                        }
-            
-                        return default(Contact);
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (client_ != null)
-                    client_.Dispose();
-            }
-        }
-    
-        /// <returns>Success</returns>
-        /// <exception cref="APIException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Contact> MeAsync()
-        {
-            return MeAsync(System.Threading.CancellationToken.None);
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="APIException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<Contact> MeAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Contacts/Me");
-    
-            var client_ = new System.Net.Http.HttpClient();
-            try
-            {
-                using (var request_ = await CreateHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Contact>(response_, headers_).ConfigureAwait(false);
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == "401") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new APIException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
-                        if (status_ == "403") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new APIException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
-                        if (status_ != "200" && status_ != "204")
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new APIException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
-                        }
-            
-                        return default(Contact);
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (client_ != null)
-                    client_.Dispose();
-            }
-        }
-    
-        /// <returns>Success</returns>
-        /// <exception cref="APIException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Contact> ValidateAsync(string emailAddress, string password)
-        {
-            return ValidateAsync(emailAddress, password, System.Threading.CancellationToken.None);
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="APIException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<Contact> ValidateAsync(string emailAddress, string password, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Contacts/Validate?");
-            if (emailAddress != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("emailAddress") + "=").Append(System.Uri.EscapeDataString(ConvertToString(emailAddress, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (password != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("password") + "=").Append(System.Uri.EscapeDataString(ConvertToString(password, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-    
-            var client_ = new System.Net.Http.HttpClient();
-            try
-            {
-                using (var request_ = await CreateHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Contact>(response_, headers_).ConfigureAwait(false);
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == "401") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new APIException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
-                        if (status_ == "403") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new APIException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -599,16 +589,76 @@ namespace LandscapeInstitute.WebAPI.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum OAuthAppStatusReason
+    public partial class StringObjectKeyValuePair 
     {
-        _1 = 1,
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Key { get; set; }
     
-        _2 = 2,
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public object Value { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static StringObjectKeyValuePair FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<StringObjectKeyValuePair>(data);
+        }
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum DefaultState
+    public partial class ExtensionDataObject 
+    {
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static ExtensionDataObject FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ExtensionDataObject>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class EntityReference 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("logicalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LogicalName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("keyAttributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> KeyAttributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("rowVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RowVersion { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static EntityReference FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<EntityReference>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum Fsdyn_oauthappState
     {
         _0 = 0,
     
@@ -617,40 +667,372 @@ namespace LandscapeInstitute.WebAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class OptionSetValue 
+    {
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Value { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static OptionSetValue FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<OptionSetValue>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum EntityState
+    {
+        _0 = 0,
+    
+        _1 = 1,
+    
+        _2 = 2,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class StringStringKeyValuePair 
+    {
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Key { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Value { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static StringStringKeyValuePair FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<StringStringKeyValuePair>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum EntityRole
+    {
+        _0 = 0,
+    
+        _1 = 1,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Relationship 
+    {
+        [Newtonsoft.Json.JsonProperty("schemaName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SchemaName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("primaryEntityRole", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityRole PrimaryEntityRole { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static Relationship FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Relationship>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ObjectLazy 
+    {
+        [Newtonsoft.Json.JsonProperty("isValueCreated", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsValueCreated { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public object Value { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static ObjectLazy FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ObjectLazy>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Entity 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("logicalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LogicalName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> Attributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityState", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityState EntityState { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("formattedValues", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringStringKeyValuePair> FormattedValues { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("relatedEntities", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<RelationshipEntityCollectionKeyValuePair> RelatedEntities { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("rowVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RowVersion { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("keyAttributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> KeyAttributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hasLazyFileAttribute", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool HasLazyFileAttribute { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ObjectLazy LazyFileAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileSizeAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int LazyFileSizeAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static Entity FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Entity>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class EntityCollection 
+    {
+        [Newtonsoft.Json.JsonProperty("entities", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Entity> Entities { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("moreRecords", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool MoreRecords { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("pagingCookie", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PagingCookie { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("minActiveRowVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MinActiveRowVersion { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("totalRecordCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TotalRecordCount { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("totalRecordCountLimitExceeded", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool TotalRecordCountLimitExceeded { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static EntityCollection FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<EntityCollection>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class RelationshipEntityCollectionKeyValuePair 
+    {
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Relationship Key { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityCollection Value { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static RelationshipEntityCollectionKeyValuePair FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<RelationshipEntityCollectionKeyValuePair>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class OAuthApp 
     {
-        [Newtonsoft.Json.JsonProperty("domain", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Domain { get; set; }
+        [Newtonsoft.Json.JsonProperty("createdBy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy { get; set; }
+    
+        /// <summary>Date and time when the record was created.</summary>
+        [Newtonsoft.Json.JsonProperty("createdOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? CreatedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy_Delegate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy_Delegate { get; set; }
     
         [Newtonsoft.Json.JsonProperty("appLogo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public byte[] AppLogo { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid Id { get; set; }
+        [Newtonsoft.Json.JsonProperty("entityImage_Timestamp", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? EntityImage_Timestamp { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityImage_URL", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityImage_URL { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityImageId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? EntityImageId { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("autoApprove", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? AutoApprove { get; set; }
     
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Description { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("clientID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ClientID { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("clientSecret", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ClientSecret { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("clientID", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string ClientID { get; set; }
     
         [Newtonsoft.Json.JsonProperty("companyName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string CompanyName { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("domain", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Domain { get; set; }
+    
+        /// <summary>The name of the custom entity.</summary>
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+    
+        /// <summary>Unique identifier for entity instances</summary>
+        [Newtonsoft.Json.JsonProperty("oAuthAppId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? OAuthAppId { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("redirectURL", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RedirectURL { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("statusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public OAuthAppStatusReason StatusReason { get; set; }
+        /// <summary>Sequence number of the import that created this record.</summary>
+        [Newtonsoft.Json.JsonProperty("importSequenceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? ImportSequenceNumber { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("state", Required = Newtonsoft.Json.Required.Always)]
-        public DefaultState State { get; set; }
+        [Newtonsoft.Json.JsonProperty("modifiedBy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy { get; set; }
+    
+        /// <summary>Date and time when the record was modified.</summary>
+        [Newtonsoft.Json.JsonProperty("modifiedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ModifiedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy_Delegate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy_Delegate { get; set; }
+    
+        /// <summary>Date and time that the record was migrated.</summary>
+        [Newtonsoft.Json.JsonProperty("recordCreatedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RecordCreatedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Owner { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningBusinessUnit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningBusinessUnit { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningTeam", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningTeam { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningUser", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningUser { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Fsdyn_oauthappState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("statusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue StatusReason { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("timeZoneRuleVersionNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TimeZoneRuleVersionNumber { get; set; }
+    
+        /// <summary>Time zone code that was in use when the record was created.</summary>
+        [Newtonsoft.Json.JsonProperty("utcConversionTimeZoneCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? UtcConversionTimeZoneCode { get; set; }
+    
+        /// <summary>Version Number</summary>
+        [Newtonsoft.Json.JsonProperty("versionNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? VersionNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("logicalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LogicalName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> Attributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityState", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityState EntityState { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("formattedValues", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringStringKeyValuePair> FormattedValues { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("relatedEntities", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<RelationshipEntityCollectionKeyValuePair> RelatedEntities { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("rowVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RowVersion { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("keyAttributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> KeyAttributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hasLazyFileAttribute", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool HasLazyFileAttribute { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ObjectLazy LazyFileAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileSizeAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int LazyFileSizeAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
     
         public string ToJson() 
         {
@@ -665,50 +1047,1802 @@ namespace LandscapeInstitute.WebAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum ContactStatusReason
+    public partial class Money 
     {
-        _1 = 1,
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double Value { get; set; }
     
-        _2 = 2,
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
     
-        _247960000 = 247960000,
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
     
-        _247960001 = 247960001,
+        public static Money FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Money>(data);
+        }
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class Contact 
+    public enum ContactState
     {
-        [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string LastName { get; set; }
+        _0 = 0,
     
-        [Newtonsoft.Json.JsonProperty("state", Required = Newtonsoft.Json.Required.Always)]
-        public DefaultState State { get; set; }
+        _1 = 1,
     
-        [Newtonsoft.Json.JsonProperty("emailAddress2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string EmailAddress2 { get; set; }
+    }
     
-        [Newtonsoft.Json.JsonProperty("emailAddress3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string EmailAddress3 { get; set; }
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum AccountState
+    {
+        _0 = 0,
     
+        _1 = 1,
+    
+    }
+    
+    /// <summary>Business that represents a customer or potential customer. The company that is billed in business transactions.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Account 
+    {
+        [Newtonsoft.Json.JsonProperty("category", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Category { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("classification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Classification { get; set; }
+    
+        /// <summary>Unique identifier of the account.</summary>
+        [Newtonsoft.Json.JsonProperty("accountId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? AccountId { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        /// <summary>Type an ID number or code for the account to quickly search and identify the account in system views.</summary>
+        [Newtonsoft.Json.JsonProperty("accountNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AccountNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("accountRating", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue AccountRating { get; set; }
+    
+        /// <summary>Unique identifier for address 1.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_ID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Address1_ID { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1_AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1_AddressType { get; set; }
+    
+        /// <summary>Type the city for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_City", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_City { get; set; }
+    
+        /// <summary>Shows the complete primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1 { get; set; }
+    
+        /// <summary>Type the country or region for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Country_Region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Country_Region { get; set; }
+    
+        /// <summary>Type the county for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_County", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_County { get; set; }
+    
+        /// <summary>Type the fax number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Fax { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1_FreightTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1_FreightTerms { get; set; }
+    
+        /// <summary>Type the latitude value for the primary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address1_Latitude { get; set; }
+    
+        /// <summary>Type the first line of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Street1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Street1 { get; set; }
+    
+        /// <summary>Type the second line of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Street2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Street2 { get; set; }
+    
+        /// <summary>Type the third line of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Street3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Street3 { get; set; }
+    
+        /// <summary>Type the longitude value for the primary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address1_Longitude { get; set; }
+    
+        /// <summary>Type a descriptive name for the primary address, such as Corporate Headquarters.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Name { get; set; }
+    
+        /// <summary>Type the ZIP Code or postal code for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_ZIP_PostalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_ZIP_PostalCode { get; set; }
+    
+        /// <summary>Type the post office box number of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_PostOfficeBox", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_PostOfficeBox { get; set; }
+    
+        /// <summary>Type the name of the main contact at the account's primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_PrimaryContactName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_PrimaryContactName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1_ShippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1_ShippingMethod { get; set; }
+    
+        /// <summary>Type the state or province of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_State_Province", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_State_Province { get; set; }
+    
+        /// <summary>Type the main phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("addressPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AddressPhone { get; set; }
+    
+        /// <summary>Type a second phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Telephone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Telephone2 { get; set; }
+    
+        /// <summary>Type a third phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Telephone3 { get; set; }
+    
+        /// <summary>Type the UPS zone of the primary address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_UPSZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_UPSZone { get; set; }
+    
+        /// <summary>Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_UTCOffset", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Address1_UTCOffset { get; set; }
+    
+        /// <summary>Unique identifier for address 2.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_ID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Address2_ID { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address2_AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address2_AddressType { get; set; }
+    
+        /// <summary>Type the city for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_City", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_City { get; set; }
+    
+        /// <summary>Shows the complete secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2 { get; set; }
+    
+        /// <summary>Type the country or region for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Country_Region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Country_Region { get; set; }
+    
+        /// <summary>Type the county for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_County", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_County { get; set; }
+    
+        /// <summary>Type the fax number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Fax { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address2_FreightTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address2_FreightTerms { get; set; }
+    
+        /// <summary>Type the latitude value for the secondary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address2_Latitude { get; set; }
+    
+        /// <summary>Type the first line of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Street1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Street1 { get; set; }
+    
+        /// <summary>Type the second line of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Street2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Street2 { get; set; }
+    
+        /// <summary>Type the third line of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Street3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Street3 { get; set; }
+    
+        /// <summary>Type the longitude value for the secondary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address2_Longitude { get; set; }
+    
+        /// <summary>Type a descriptive name for the secondary address, such as Corporate Headquarters.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Name { get; set; }
+    
+        /// <summary>Type the ZIP Code or postal code for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_ZIP_PostalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_ZIP_PostalCode { get; set; }
+    
+        /// <summary>Type the post office box number of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_PostOfficeBox", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_PostOfficeBox { get; set; }
+    
+        /// <summary>Type the name of the main contact at the account's secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_PrimaryContactName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_PrimaryContactName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address2_ShippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address2_ShippingMethod { get; set; }
+    
+        /// <summary>Type the state or province of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_State_Province", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_State_Province { get; set; }
+    
+        /// <summary>Type the main phone number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Telephone1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Telephone1 { get; set; }
+    
+        /// <summary>Type a second phone number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Telephone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Telephone2 { get; set; }
+    
+        /// <summary>Type a third phone number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Telephone3 { get; set; }
+    
+        /// <summary>Type the UPS zone of the secondary address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_UPSZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_UPSZone { get; set; }
+    
+        /// <summary>Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_UTCOffset", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Address2_UTCOffset { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging30", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging30 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging30_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging30_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging60", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging60 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging60_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging60_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging90", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging90 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging90_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging90_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("businessType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue BusinessType { get; set; }
+    
+        /// <summary>ClickDimensions field that aggregates all child Contact Total Score fields.</summary>
+        [Newtonsoft.Json.JsonProperty("accountScore", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? AccountScore { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("allowTextMessages", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? AllowTextMessages { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy_ExternalParty", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy_ExternalParty { get; set; }
+    
+        /// <summary>Shows the date and time when the record was created. The date and time are displayed in the time zone selected in Microsoft Dynamics 365 options.</summary>
+        [Newtonsoft.Json.JsonProperty("createdOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? CreatedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy_Delegate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy_Delegate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("creditLimit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money CreditLimit { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("creditLimit_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money CreditLimit_Base { get; set; }
+    
+        /// <summary>Select whether the credit for the account is on hold. This is a useful reference while addressing the invoice and accounting issues with the customer.</summary>
+        [Newtonsoft.Json.JsonProperty("creditHold", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? CreditHold { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("customerSize", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue CustomerSize { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("relationshipType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue RelationshipType { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("priceList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PriceList { get; set; }
+    
+        /// <summary>Type additional information to describe the account, such as an excerpt from the company's website.</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+    
+        /// <summary>Select whether the account allows bulk email sent through campaigns. If Do Not Allow is selected, the account can be added to marketing lists, but is excluded from email.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowBulkEmails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowBulkEmails { get; set; }
+    
+        /// <summary>Select whether the account allows bulk postal mail sent through marketing campaigns or quick campaigns. If Do Not Allow is selected, the account can be added to marketing lists, but will be excluded from the postal mail.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowBulkMails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowBulkMails { get; set; }
+    
+        /// <summary>Select whether the account allows direct email sent from Microsoft Dynamics 365.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowEmails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowEmails { get; set; }
+    
+        /// <summary>Select whether the account allows faxes. If Do Not Allow is selected, the account will be excluded from fax activities distributed in marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowFaxes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowFaxes { get; set; }
+    
+        /// <summary>Select whether the account allows phone calls. If Do Not Allow is selected, the account will be excluded from phone call activities distributed in marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowPhoneCalls", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowPhoneCalls { get; set; }
+    
+        /// <summary>Select whether the account allows direct mail. If Do Not Allow is selected, the account will be excluded from letter activities distributed in marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowMails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowMails { get; set; }
+    
+        /// <summary>Select whether the account accepts marketing materials, such as brochures or catalogs.</summary>
+        [Newtonsoft.Json.JsonProperty("sendMarketingMaterials", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? SendMarketingMaterials { get; set; }
+    
+        /// <summary>Type the primary email address for the account.</summary>
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Email { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("firstName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        /// <summary>Type the secondary email address for the account.</summary>
+        [Newtonsoft.Json.JsonProperty("emailAddress2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EmailAddress2 { get; set; }
+    
+        /// <summary>Type an alternate email address for the account.</summary>
+        [Newtonsoft.Json.JsonProperty("emailAddress3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EmailAddress3 { get; set; }
+    
+        /// <summary>Shows the default image for the record.</summary>
+        [Newtonsoft.Json.JsonProperty("defaultImage", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public byte[] DefaultImage { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityImage_Timestamp", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? EntityImage_Timestamp { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityImage_URL", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityImage_URL { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("entityImageId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? EntityImageId { get; set; }
+    
+        /// <summary>Shows the conversion rate of the record's currency. The exchange rate is used to convert all money fields in the record from the local currency to the system's default currency.</summary>
+        [Newtonsoft.Json.JsonProperty("exchangeRate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? ExchangeRate { get; set; }
+    
+        /// <summary>Type the fax number for the account.</summary>
+        [Newtonsoft.Json.JsonProperty("fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Fax { get; set; }
+    
+        /// <summary>Information about whether to allow following email activity like opens, attachment views and link clicks for emails sent to the account.</summary>
+        [Newtonsoft.Json.JsonProperty("followEmailActivity", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? FollowEmailActivity { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("activeSubscription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ActiveSubscription { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1LatLng", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1LatLng { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1Region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1Region { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("allowDirectoryContact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? AllowDirectoryContact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("facebook", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Facebook { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("googlePlus", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string GooglePlus { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("importRef", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ImportRef { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("instagram", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Instagram { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("isEducationalInstitute", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? IsEducationalInstitute { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("isHeadOffice", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? IsHeadOffice { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("isMembershipOrganisation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? IsMembershipOrganisation { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("legacyid", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Legacyid { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("linkedIn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LinkedIn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipEndDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? MembershipEndDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MembershipNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipStatus", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MembershipStatus { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipStartDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? MembershipStartDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("mobile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Mobile { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("numberOfChargeableStaff", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? NumberOfChargeableStaff { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("paymentsOnCompanyAccountApproved", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? PaymentsOnCompanyAccountApproved { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("paymentsOnPersonalAccountApproved", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? PaymentsOnPersonalAccountApproved { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("profileImageUrl", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProfileImageUrl { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("reasonForLeaving", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue ReasonForLeaving { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money RenewalAmount { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalAmount_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money RenewalAmount_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalEndDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RenewalEndDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalStartDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RenewalStartDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalSubscription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RenewalSubscription { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("shareLocation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ShareLocation { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sharePhoto", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? SharePhoto { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("subscriptionEndDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? SubscriptionEndDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("subscriptionStartDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? SubscriptionStartDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone4", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone4 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone5", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone5 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("twitter", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Twitter { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("youTube", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YouTube { get; set; }
+    
+        /// <summary>Type the URL for the account's FTP site to enable users to access data and share documents.</summary>
+        [Newtonsoft.Json.JsonProperty("ftpSite", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FtpSite { get; set; }
+    
+        /// <summary>Unique identifier of the data import or data migration that created this record.</summary>
+        [Newtonsoft.Json.JsonProperty("importSequenceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? ImportSequenceNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("industry", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Industry { get; set; }
+    
+        /// <summary>Contains the date and time stamp of the last on hold time.</summary>
+        [Newtonsoft.Json.JsonProperty("lastOnHoldTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? LastOnHoldTime { get; set; }
+    
+        /// <summary>Shows the date when the account was last included in a marketing campaign or quick campaign.</summary>
+        [Newtonsoft.Json.JsonProperty("lastDateIncludedInCampaign", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? LastDateIncludedInCampaign { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("marketCapitalization", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money MarketCapitalization { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("marketCapitalization_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money MarketCapitalization_Base { get; set; }
+    
+        /// <summary>Whether is only for marketing</summary>
+        [Newtonsoft.Json.JsonProperty("marketingOnly", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? MarketingOnly { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("masterID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference MasterID { get; set; }
+    
+        /// <summary>Shows whether the account has been merged with another account.</summary>
+        [Newtonsoft.Json.JsonProperty("merged", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Merged { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy_ExternalParty", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy_ExternalParty { get; set; }
+    
+        /// <summary>Shows the date and time when the record was last updated. The date and time are displayed in the time zone selected in Microsoft Dynamics 365 options.</summary>
+        [Newtonsoft.Json.JsonProperty("modifiedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ModifiedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy_Delegate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy_Delegate { get; set; }
+    
+        /// <summary>Type the company or business name.</summary>
+        [Newtonsoft.Json.JsonProperty("accountName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AccountName { get; set; }
+    
+        /// <summary>Type the number of employees that work at the account for use in marketing segmentation and demographic analysis.</summary>
+        [Newtonsoft.Json.JsonProperty("numberOfEmployees", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? NumberOfEmployees { get; set; }
+    
+        /// <summary>Shows how long, in minutes, that the record was on hold.</summary>
+        [Newtonsoft.Json.JsonProperty("onHoldTime_Minutes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? OnHoldTime_Minutes { get; set; }
+    
+        /// <summary>Number of open opportunities against an account and its child accounts.</summary>
+        [Newtonsoft.Json.JsonProperty("openDeals", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? OpenDeals { get; set; }
+    
+        /// <summary>Last Updated time of rollup field Open Deals.</summary>
+        [Newtonsoft.Json.JsonProperty("openDeals_LastUpdatedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? OpenDeals_LastUpdatedOn { get; set; }
+    
+        /// <summary>State of rollup field Open Deals.</summary>
+        [Newtonsoft.Json.JsonProperty("openDeals_State", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? OpenDeals_State { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("openRevenue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money OpenRevenue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("openRevenue_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money OpenRevenue_Base { get; set; }
+    
+        /// <summary>Last Updated time of rollup field Open Revenue.</summary>
+        [Newtonsoft.Json.JsonProperty("openRevenue_LastUpdatedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? OpenRevenue_LastUpdatedOn { get; set; }
+    
+        /// <summary>State of rollup field Open Revenue.</summary>
+        [Newtonsoft.Json.JsonProperty("openRevenue_State", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? OpenRevenue_State { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("originatingLead", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OriginatingLead { get; set; }
+    
+        /// <summary>Date and time that the record was migrated.</summary>
+        [Newtonsoft.Json.JsonProperty("recordCreatedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RecordCreatedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Owner { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("ownership", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Ownership { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningBusinessUnit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningBusinessUnit { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningTeam", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningTeam { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningUser", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningUser { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("parentAccount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ParentAccount { get; set; }
+    
+        /// <summary>For system use only. Legacy Microsoft Dynamics CRM 3.0 workflow data.</summary>
+        [Newtonsoft.Json.JsonProperty("participatesInWorkflow", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ParticipatesInWorkflow { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("paymentTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PaymentTerms { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredDay", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PreferredDay { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PreferredTime { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredMethodOfContact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PreferredMethodOfContact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredFacility_Equipment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PreferredFacility_Equipment { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredService", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PreferredService { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredUser", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PreferredUser { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("primaryContact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PrimaryContact { get; set; }
+    
+        /// <summary>Primary Satori ID for Account</summary>
+        [Newtonsoft.Json.JsonProperty("primarySatoriID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PrimarySatoriID { get; set; }
+    
+        /// <summary>Primary Twitter ID for Account</summary>
+        [Newtonsoft.Json.JsonProperty("primaryTwitterID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PrimaryTwitterID { get; set; }
+    
+        /// <summary>Shows the ID of the process.</summary>
+        [Newtonsoft.Json.JsonProperty("process", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Process { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("annualRevenue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money AnnualRevenue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("annualRevenue_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money AnnualRevenue_Base { get; set; }
+    
+        /// <summary>Type the number of shares available to the public for the account. This number is used as an indicator in financial performance analysis.</summary>
+        [Newtonsoft.Json.JsonProperty("sharesOutstanding", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? SharesOutstanding { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("shippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue ShippingMethod { get; set; }
+    
+        /// <summary>Type the Standard Industrial Classification (SIC) code that indicates the account's primary industry of business, for use in marketing segmentation and demographic analysis.</summary>
+        [Newtonsoft.Json.JsonProperty("sicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SicCode { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sla", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Sla { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lastSLAApplied", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference LastSLAApplied { get; set; }
+    
+        /// <summary>Shows the ID of the stage.</summary>
+        [Newtonsoft.Json.JsonProperty("_Deprecated_ProcessStage", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? _Deprecated_ProcessStage { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public AccountState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("statusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue StatusReason { get; set; }
+    
+        /// <summary>Type the stock exchange at which the account is listed to track their stock and financial performance of the company.</summary>
+        [Newtonsoft.Json.JsonProperty("stockExchange", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string StockExchange { get; set; }
+    
+        /// <summary>Number of users or conversations followed the record</summary>
+        [Newtonsoft.Json.JsonProperty("teamsFollowed", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TeamsFollowed { get; set; }
+    
+        /// <summary>Type the main phone number for this account.</summary>
+        [Newtonsoft.Json.JsonProperty("mainPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MainPhone { get; set; }
+    
+        /// <summary>Type a second phone number for this account.</summary>
+        [Newtonsoft.Json.JsonProperty("otherPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string OtherPhone { get; set; }
+    
+        /// <summary>Type a third phone number for this account.</summary>
+        [Newtonsoft.Json.JsonProperty("telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone3 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("territoryCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue TerritoryCode { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("territory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Territory { get; set; }
+    
+        /// <summary>Type the stock exchange symbol for the account to track financial performance of the company. You can click the code entered in this field to access the latest trading information from MSN Money.</summary>
+        [Newtonsoft.Json.JsonProperty("tickerSymbol", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TickerSymbol { get; set; }
+    
+        /// <summary>Total time spent for emails (read and write) and meetings by me in relation to account record.</summary>
+        [Newtonsoft.Json.JsonProperty("timeSpentByMe", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TimeSpentByMe { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("timeZoneRuleVersionNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TimeZoneRuleVersionNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Currency { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("_Deprecated_TraversedPath", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string _Deprecated_TraversedPath { get; set; }
+    
+        /// <summary>Time zone code that was in use when the record was created.</summary>
+        [Newtonsoft.Json.JsonProperty("utcConversionTimeZoneCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? UtcConversionTimeZoneCode { get; set; }
+    
+        /// <summary>Version number of the account.</summary>
+        [Newtonsoft.Json.JsonProperty("versionNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? VersionNumber { get; set; }
+    
+        /// <summary>Type the account's website URL to get quick details about the company profile.</summary>
+        [Newtonsoft.Json.JsonProperty("website", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Website { get; set; }
+    
+        /// <summary>Type the phonetic spelling of the company name, if specified in Japanese, to make sure the name is pronounced correctly in phone calls and other communications.</summary>
+        [Newtonsoft.Json.JsonProperty("yomiAccountName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YomiAccountName { get; set; }
+    
+        /// <summary>1:N account_master_account</summary>
+        [Newtonsoft.Json.JsonProperty("referencedaccount_master_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Account> Referencedaccount_master_account { get; set; }
+    
+        /// <summary>1:N account_parent_account</summary>
+        [Newtonsoft.Json.JsonProperty("referencedaccount_parent_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Account> Referencedaccount_parent_account { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("referencingaccount_master_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Account Referencingaccount_master_account { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("referencingaccount_parent_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Account Referencingaccount_parent_account { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("logicalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LogicalName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> Attributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityState", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityState EntityState { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("formattedValues", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringStringKeyValuePair> FormattedValues { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("relatedEntities", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<RelationshipEntityCollectionKeyValuePair> RelatedEntities { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("rowVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RowVersion { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("keyAttributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> KeyAttributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hasLazyFileAttribute", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool HasLazyFileAttribute { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ObjectLazy LazyFileAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileSizeAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int LazyFileSizeAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static Account FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Account>(data);
+        }
+    
+    }
+    
+    /// <summary>Person with whom a business unit has a relationship, such as customer, supplier, and colleague.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Contact 
+    {
+        [Newtonsoft.Json.JsonProperty("account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Account { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Role { get; set; }
+    
+        /// <summary>Unique identifier for address 1.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_ID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Address1_ID { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1_AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1_AddressType { get; set; }
+    
+        /// <summary>Type the city for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_City", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_City { get; set; }
+    
+        /// <summary>Shows the complete primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("mainAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MainAddress { get; set; }
+    
+        /// <summary>Type the country or region for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Country_Region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Country_Region { get; set; }
+    
+        /// <summary>Type the county for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_County", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_County { get; set; }
+    
+        /// <summary>Type the fax number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Fax { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1_FreightTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1_FreightTerms { get; set; }
+    
+        /// <summary>Type the latitude value for the primary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address1_Latitude { get; set; }
+    
+        /// <summary>Type the first line of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Street1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Street1 { get; set; }
+    
+        /// <summary>Type the second line of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Street2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Street2 { get; set; }
+    
+        /// <summary>Type the third line of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Street3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Street3 { get; set; }
+    
+        /// <summary>Type the longitude value for the primary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address1_Longitude { get; set; }
+    
+        /// <summary>Type a descriptive name for the primary address, such as Corporate Headquarters.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Name { get; set; }
+    
+        /// <summary>Type the ZIP Code or postal code for the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_ZIP_PostalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_ZIP_PostalCode { get; set; }
+    
+        /// <summary>Type the post office box number of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_PostOfficeBox", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_PostOfficeBox { get; set; }
+    
+        /// <summary>Type the name of the main contact at the account's primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_PrimaryContactName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_PrimaryContactName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address1_ShippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address1_ShippingMethod { get; set; }
+    
+        /// <summary>Type the state or province of the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_State_Province", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_State_Province { get; set; }
+    
+        /// <summary>Type the main phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Phone { get; set; }
+    
+        /// <summary>Type a second phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Telephone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Telephone2 { get; set; }
+    
+        /// <summary>Type a third phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_Telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_Telephone3 { get; set; }
+    
+        /// <summary>Type the UPS zone of the primary address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_UPSZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address1_UPSZone { get; set; }
+    
+        /// <summary>Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.</summary>
+        [Newtonsoft.Json.JsonProperty("address1_UTCOffset", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Address1_UTCOffset { get; set; }
+    
+        /// <summary>Unique identifier for address 2.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_ID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Address2_ID { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address2_AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address2_AddressType { get; set; }
+    
+        /// <summary>Type the city for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_City", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_City { get; set; }
+    
+        /// <summary>Shows the complete secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("invoiceAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string InvoiceAddress { get; set; }
+    
+        /// <summary>Type the country or region for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Country_Region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Country_Region { get; set; }
+    
+        /// <summary>Type the county for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_County", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_County { get; set; }
+    
+        /// <summary>Type the fax number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Fax { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address2_FreightTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address2_FreightTerms { get; set; }
+    
+        /// <summary>Type the latitude value for the secondary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address2_Latitude { get; set; }
+    
+        /// <summary>Type the first line of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Street1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Street1 { get; set; }
+    
+        /// <summary>Type the second line of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Street2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Street2 { get; set; }
+    
+        /// <summary>Type the third line of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Street3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Street3 { get; set; }
+    
+        /// <summary>Type the longitude value for the secondary address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address2_Longitude { get; set; }
+    
+        /// <summary>Type a descriptive name for the secondary address, such as Corporate Headquarters.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Name { get; set; }
+    
+        /// <summary>Type the ZIP Code or postal code for the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_ZIP_PostalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_ZIP_PostalCode { get; set; }
+    
+        /// <summary>Type the post office box number of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_PostOfficeBox", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_PostOfficeBox { get; set; }
+    
+        /// <summary>Type the name of the main contact at the account's secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_PrimaryContactName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_PrimaryContactName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address2_ShippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address2_ShippingMethod { get; set; }
+    
+        /// <summary>Type the state or province of the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_State_Province", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_State_Province { get; set; }
+    
+        /// <summary>Type the main phone number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Telephone1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Telephone1 { get; set; }
+    
+        /// <summary>Type a second phone number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Telephone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Telephone2 { get; set; }
+    
+        /// <summary>Type a third phone number associated with the secondary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_Telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_Telephone3 { get; set; }
+    
+        /// <summary>Type the UPS zone of the secondary address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_UPSZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address2_UPSZone { get; set; }
+    
+        /// <summary>Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.</summary>
+        [Newtonsoft.Json.JsonProperty("address2_UTCOffset", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Address2_UTCOffset { get; set; }
+    
+        /// <summary>Unique identifier for address 3.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_ID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Address3_ID { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address3_AddressType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address3_AddressType { get; set; }
+    
+        /// <summary>Type the city for the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_City", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_City { get; set; }
+    
+        /// <summary>Shows the complete third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3 { get; set; }
+    
+        /// <summary>the country or region for the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Country_Region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Country_Region { get; set; }
+    
+        /// <summary>Type the county for the third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_County", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_County { get; set; }
+    
+        /// <summary>Type the fax number associated with the third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Fax { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address3_FreightTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address3_FreightTerms { get; set; }
+    
+        /// <summary>Type the latitude value for the third address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address3_Latitude { get; set; }
+    
+        /// <summary>the first line of the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Street1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Street1 { get; set; }
+    
+        /// <summary>the second line of the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Street2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Street2 { get; set; }
+    
+        /// <summary>the third line of the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Street3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Street3 { get; set; }
+    
+        /// <summary>Type the longitude value for the third address for use in mapping and other applications.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? Address3_Longitude { get; set; }
+    
+        /// <summary>Type a descriptive name for the third address, such as Corporate Headquarters.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Name { get; set; }
+    
+        /// <summary>the ZIP Code or postal code for the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_ZIP_PostalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_ZIP_PostalCode { get; set; }
+    
+        /// <summary>the post office box number of the 3rd address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_PostOfficeBox", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_PostOfficeBox { get; set; }
+    
+        /// <summary>Type the name of the main contact at the account's third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_PrimaryContactName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_PrimaryContactName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("address3_ShippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Address3_ShippingMethod { get; set; }
+    
+        /// <summary>the state or province of the third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_State_Province", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_State_Province { get; set; }
+    
+        /// <summary>Type the main phone number associated with the third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Telephone1", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Telephone1 { get; set; }
+    
+        /// <summary>Type a second phone number associated with the third address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Telephone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Telephone2 { get; set; }
+    
+        /// <summary>Type a third phone number associated with the primary address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_Telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_Telephone3 { get; set; }
+    
+        /// <summary>Type the UPS zone of the third address to make sure shipping charges are calculated correctly and deliveries are made promptly, if shipped by UPS.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_UPSZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Address3_UPSZone { get; set; }
+    
+        /// <summary>Select the time zone, or UTC offset, for this address so that other people can reference it when they contact someone at this address.</summary>
+        [Newtonsoft.Json.JsonProperty("address3_UTCOffset", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Address3_UTCOffset { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging30", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging30 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging30_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging30_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging60", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging60 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging60_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging60_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging90", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging90 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("aging90_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money Aging90_Base { get; set; }
+    
+        /// <summary>Enter the date of the contact's wedding or service anniversary for use in customer gift programs or other communications.</summary>
+        [Newtonsoft.Json.JsonProperty("anniversary", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? Anniversary { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("annualIncome", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money AnnualIncome { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("annualIncome_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money AnnualIncome_Base { get; set; }
+    
+        /// <summary>Type the name of the contact's assistant.</summary>
+        [Newtonsoft.Json.JsonProperty("assistant", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Assistant { get; set; }
+    
+        /// <summary>Type the phone number for the contact's assistant.</summary>
+        [Newtonsoft.Json.JsonProperty("assistantPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AssistantPhone { get; set; }
+    
+        /// <summary>Enter the contact's birthday for use in customer gift programs or other communications.</summary>
+        [Newtonsoft.Json.JsonProperty("birthday", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? Birthday { get; set; }
+    
+        /// <summary>Type a second business phone number for this contact.</summary>
+        [Newtonsoft.Json.JsonProperty("businessPhone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BusinessPhone2 { get; set; }
+    
+        /// <summary>Stores Image of the Business Card</summary>
+        [Newtonsoft.Json.JsonProperty("businessCard", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BusinessCard { get; set; }
+    
+        /// <summary>Stores Business Card Control Properties.</summary>
+        [Newtonsoft.Json.JsonProperty("businessCardAttributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BusinessCardAttributes { get; set; }
+    
+        /// <summary>Type a callback phone number for this contact.</summary>
+        [Newtonsoft.Json.JsonProperty("callbackNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CallbackNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("age", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Age { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("allowTextMessages", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? AllowTextMessages { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("facebook", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Facebook { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("grade", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Grade { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("identifiedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? IdentifiedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("image", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Image { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("ip", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Ip { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Latitude { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("linkedIn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LinkedIn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Longitude { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("partitionKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PartitionKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("rowKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RowKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("score", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Score { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("social", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Social { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("totalScore", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TotalScore { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("twitter", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Twitter { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("visitorKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string VisitorKey { get; set; }
+    
+        /// <summary>Type the names of the contact's children for reference in communications and client programs.</summary>
+        [Newtonsoft.Json.JsonProperty("childrensNames", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ChildrensNames { get; set; }
+    
+        /// <summary>Type the company phone of the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("companyPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CompanyPhone { get; set; }
+    
+        /// <summary>Unique identifier of the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("contactId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? ContactId { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy_ExternalParty", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy_ExternalParty { get; set; }
+    
+        /// <summary>Shows the date and time when the record was created. The date and time are displayed in the time zone selected in Microsoft Dynamics 365 options.</summary>
+        [Newtonsoft.Json.JsonProperty("createdOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? CreatedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("createdBy_Delegate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CreatedBy_Delegate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("creditLimit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money CreditLimit { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("creditLimit_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money CreditLimit_Base { get; set; }
+    
+        /// <summary>Select whether the contact is on a credit hold, for reference when addressing invoice and accounting issues.</summary>
+        [Newtonsoft.Json.JsonProperty("creditHold", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? CreditHold { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("customerSize", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue CustomerSize { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("relationshipType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue RelationshipType { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("priceList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PriceList { get; set; }
+    
+        /// <summary>Type the department or business unit where the contact works in the parent company or business.</summary>
+        [Newtonsoft.Json.JsonProperty("department", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Department { get; set; }
+    
+        /// <summary>Type additional information to describe the contact, such as an excerpt from the company's website.</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+    
+        /// <summary>Select whether the contact accepts bulk email sent through marketing campaigns or quick campaigns. If Do Not Allow is selected, the contact can be added to marketing lists, but will be excluded from the email.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowBulkEmails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowBulkEmails { get; set; }
+    
+        /// <summary>Select whether the contact accepts bulk postal mail sent through marketing campaigns or quick campaigns. If Do Not Allow is selected, the contact can be added to marketing lists, but will be excluded from the letters.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowBulkMails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowBulkMails { get; set; }
+    
+        /// <summary>Select whether the contact allows direct email sent from Microsoft Dynamics 365. If Do Not Allow is selected, Microsoft Dynamics 365 will not send the email.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowEmails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowEmails { get; set; }
+    
+        /// <summary>Select whether the contact allows faxes. If Do Not Allow is selected, the contact will be excluded from any fax activities distributed in marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowFaxes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowFaxes { get; set; }
+    
+        /// <summary>Select whether the contact accepts phone calls. If Do Not Allow is selected, the contact will be excluded from any phone call activities distributed in marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowPhoneCalls", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowPhoneCalls { get; set; }
+    
+        /// <summary>Select whether the contact allows direct mail. If Do Not Allow is selected, the contact will be excluded from letter activities distributed in marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("doNotAllowMails", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? DoNotAllowMails { get; set; }
+    
+        /// <summary>Select whether the contact accepts marketing materials, such as brochures or catalogs. Contacts that opt out can be excluded from marketing initiatives.</summary>
+        [Newtonsoft.Json.JsonProperty("sendMarketingMaterials", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? SendMarketingMaterials { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("education", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Education { get; set; }
+    
+        /// <summary>Type the primary email address for the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Email { get; set; }
+    
+        /// <summary>Type the secondary email address for the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("emailAddress2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EmailAddress2 { get; set; }
+    
+        /// <summary>Type an alternate email address for the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("emailAddress3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EmailAddress3 { get; set; }
+    
+        /// <summary>Type the employee ID or number for the contact for reference in orders, service cases, or other communications with the contact's organization.</summary>
+        [Newtonsoft.Json.JsonProperty("employee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Employee { get; set; }
+    
+        /// <summary>Shows the default image for the record.</summary>
+        [Newtonsoft.Json.JsonProperty("entityImage", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public byte[] EntityImage { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityImage_Timestamp", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? EntityImage_Timestamp { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityImage_URL", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityImage_URL { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("entityImageId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? EntityImageId { get; set; }
+    
+        /// <summary>Shows the conversion rate of the record's currency. The exchange rate is used to convert all money fields in the record from the local currency to the system's default currency.</summary>
+        [Newtonsoft.Json.JsonProperty("exchangeRate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? ExchangeRate { get; set; }
+    
+        /// <summary>Identifier for an external user.</summary>
+        [Newtonsoft.Json.JsonProperty("externalUserIdentifier", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ExternalUserIdentifier { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("maritalStatus", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue MaritalStatus { get; set; }
+    
+        /// <summary>Type the fax number for the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("fax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Fax { get; set; }
+    
+        /// <summary>Type the contact's first name to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("firstName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string FirstName { get; set; }
+    
+        /// <summary>Information about whether to allow following email activity like opens, attachment views and link clicks for emails sent to the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("followEmailActivity", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? FollowEmailActivity { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("accountLocked", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? AccountLocked { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("activeSubscription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ActiveSubscription { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("allowDirectoryContact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? AllowDirectoryContact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("codeOfConductDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? CodeOfConductDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("currentMembershipFee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money CurrentMembershipFee { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("currentMembershipFee_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money CurrentMembershipFee_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("emailConfirmed", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? EmailConfirmed { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("googlePlus", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string GooglePlus { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("honours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Honours { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("importRef", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ImportRef { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("initials", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Initials { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("instagram", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Instagram { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("knownAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string KnownAs { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lastLogIn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? LastLogIn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("legacyid", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Legacyid { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("legacyPassword", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LegacyPassword { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipEndDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? MembershipEndDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MembershipNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipStatus", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MembershipStatus { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("membershipStartDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? MembershipStartDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("mustChangePasswordNextLogin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? MustChangePasswordNextLogin { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("otherSource", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string OtherSource { get; set; }
     
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Password { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid Id { get; set; }
+        [Newtonsoft.Json.JsonProperty("paymentsOnCompanyAccountApproved", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? PaymentsOnCompanyAccountApproved { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("paymentsOnPersonalAccountApproved", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? PaymentsOnPersonalAccountApproved { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("physicalCommunicationOnly", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? PhysicalCommunicationOnly { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("requestPhysicalInvoice", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? RequestPhysicalInvoice { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("previous", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Previous { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("previoussurname", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Previoussurname { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("profileImageUrl", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProfileImageUrl { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("reasonForLeaving", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue ReasonForLeaving { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money RenewalAmount { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalAmount_Base", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Money RenewalAmount_Base { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalEndDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RenewalEndDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalStartDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RenewalStartDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("renewalSubscription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RenewalSubscription { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sexualOrientation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference SexualOrientation { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("shareLocation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ShareLocation { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sharePhoto", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? SharePhoto { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("subscriptionEndDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? SubscriptionEndDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("subscriptionStartDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? SubscriptionStartDate { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephoneConfirmed", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? TelephoneConfirmed { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Title { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("youTube", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YouTube { get; set; }
+    
+        /// <summary>Type the URL for the contact's FTP site to enable users to access data and share documents.</summary>
+        [Newtonsoft.Json.JsonProperty("ftpSite", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FtpSite { get; set; }
+    
+        /// <summary>Combines and shows the contact's first and last names so that the full name can be displayed in views and reports.</summary>
+        [Newtonsoft.Json.JsonProperty("fullName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FullName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("gender", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Gender { get; set; }
+    
+        /// <summary>Type the passport number or other government ID for the contact for use in documents or reports.</summary>
+        [Newtonsoft.Json.JsonProperty("government", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Government { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hasChildren", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue HasChildren { get; set; }
+    
+        /// <summary>Type a second home phone number for this contact.</summary>
+        [Newtonsoft.Json.JsonProperty("homePhone2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string HomePhone2 { get; set; }
+    
+        /// <summary>Unique identifier of the data import or data migration that created this record.</summary>
+        [Newtonsoft.Json.JsonProperty("importSequenceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? ImportSequenceNumber { get; set; }
+    
+        /// <summary>Select whether the contact exists in a separate accounting or other system, such as Microsoft Dynamics GP or another ERP database, for use in integration processes.</summary>
+        [Newtonsoft.Json.JsonProperty("backOfficeCustomer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? BackOfficeCustomer { get; set; }
+    
+        /// <summary>Type the job title of the contact to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("jobTitle", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string JobTitle { get; set; }
+    
+        /// <summary>Type the contact's last name to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LastName { get; set; }
+    
+        /// <summary>Contains the date and time stamp of the last on hold time.</summary>
+        [Newtonsoft.Json.JsonProperty("lastOnHoldTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? LastOnHoldTime { get; set; }
+    
+        /// <summary>Shows the date when the contact was last included in a marketing campaign or quick campaign.</summary>
+        [Newtonsoft.Json.JsonProperty("lastDateIncludedInCampaign", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? LastDateIncludedInCampaign { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("leadSource", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue LeadSource { get; set; }
+    
+        /// <summary>Type the name of the contact's manager for use in escalating issues or other follow-up communications with the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("manager", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Manager { get; set; }
+    
+        /// <summary>Type the phone number for the contact's manager.</summary>
+        [Newtonsoft.Json.JsonProperty("managerPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ManagerPhone { get; set; }
+    
+        /// <summary>Whether is only for marketing</summary>
+        [Newtonsoft.Json.JsonProperty("marketingOnly", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? MarketingOnly { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("masterID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference MasterID { get; set; }
+    
+        /// <summary>Shows whether the account has been merged with a master contact.</summary>
+        [Newtonsoft.Json.JsonProperty("merged", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Merged { get; set; }
+    
+        /// <summary>Type the contact's middle name or initial to make sure the contact is addressed correctly.</summary>
+        [Newtonsoft.Json.JsonProperty("middleName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MiddleName { get; set; }
+    
+        /// <summary>Type the mobile phone number for the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("mobilePhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MobilePhone { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy_ExternalParty", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy_ExternalParty { get; set; }
+    
+        /// <summary>Shows the date and time when the record was last updated. The date and time are displayed in the time zone selected in Microsoft Dynamics 365 options.</summary>
+        [Newtonsoft.Json.JsonProperty("modifiedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ModifiedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("modifiedBy_Delegate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ModifiedBy_Delegate { get; set; }
+    
+        /// <summary>Describes whether contact is opted out or not</summary>
+        [Newtonsoft.Json.JsonProperty("gdprOptout", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? GdprOptout { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("notAtCompanyFlag", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue NotAtCompanyFlag { get; set; }
+    
+        /// <summary>lets contact subsribe / unsubscribe from Vista newsletter</summary>
+        [Newtonsoft.Json.JsonProperty("vista", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Vista { get; set; }
+    
+        /// <summary>Type the contact's nickname.</summary>
+        [Newtonsoft.Json.JsonProperty("nickname", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Nickname { get; set; }
+    
+        /// <summary>Type the number of children the contact has for reference in follow-up phone calls and other communications.</summary>
+        [Newtonsoft.Json.JsonProperty("no_OfChildren", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? No_OfChildren { get; set; }
+    
+        /// <summary>Shows how long, in minutes, that the record was on hold.</summary>
+        [Newtonsoft.Json.JsonProperty("onHoldTime_Minutes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? OnHoldTime_Minutes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("originatingLead", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OriginatingLead { get; set; }
+    
+        /// <summary>Date and time that the record was migrated.</summary>
+        [Newtonsoft.Json.JsonProperty("recordCreatedOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? RecordCreatedOn { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Owner { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningBusinessUnit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningBusinessUnit { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningTeam", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningTeam { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("owningUser", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference OwningUser { get; set; }
+    
+        /// <summary>Type the pager number for the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("pager", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Pager { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("parent_contactid", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Parent_contactid { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("parentContact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference ParentContact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("companyName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference CompanyName { get; set; }
+    
+        /// <summary>Shows whether the contact participates in workflow rules.</summary>
+        [Newtonsoft.Json.JsonProperty("participatesInWorkflow", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ParticipatesInWorkflow { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("paymentTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PaymentTerms { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredDay", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PreferredDay { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PreferredTime { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredMethodOfContact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue PreferredMethodOfContact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredFacility_Equipment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PreferredFacility_Equipment { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredService", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PreferredService { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("preferredUser", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference PreferredUser { get; set; }
+    
+        /// <summary>Shows the ID of the process.</summary>
+        [Newtonsoft.Json.JsonProperty("process", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Process { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("shippingMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue ShippingMethod { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sla", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Sla { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lastSLAApplied", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference LastSLAApplied { get; set; }
+    
+        /// <summary>Type the name of the contact's spouse or partner for reference during calls, events, or other communications with the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("spouse_PartnerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Spouse_PartnerName { get; set; }
+    
+        /// <summary>Shows the ID of the stage.</summary>
+        [Newtonsoft.Json.JsonProperty("_Deprecated_ProcessStage", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? _Deprecated_ProcessStage { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ContactState Status { get; set; }
     
         [Newtonsoft.Json.JsonProperty("statusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public ContactStatusReason StatusReason { get; set; }
+        public OptionSetValue StatusReason { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("subscription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Subscription { get; set; }
+    
+        /// <summary>Type the suffix used in the contact's name, such as Jr. or Sr. to make sure the contact is addressed correctly in sales calls, email, and marketing campaigns.</summary>
+        [Newtonsoft.Json.JsonProperty("suffix", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Suffix { get; set; }
+    
+        /// <summary>Number of users or conversations followed the record</summary>
+        [Newtonsoft.Json.JsonProperty("teamsFollowed", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TeamsFollowed { get; set; }
+    
+        /// <summary>Type the main phone number for this contact.</summary>
+        [Newtonsoft.Json.JsonProperty("businessPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BusinessPhone { get; set; }
+    
+        /// <summary>Type a second phone number for this contact.</summary>
+        [Newtonsoft.Json.JsonProperty("homePhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string HomePhone { get; set; }
+    
+        /// <summary>Type a third phone number for this contact.</summary>
+        [Newtonsoft.Json.JsonProperty("telephone3", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone3 { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("territory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public OptionSetValue Territory { get; set; }
+    
+        /// <summary>Total time spent for emails (read and write) and meetings by me in relation to the contact record.</summary>
+        [Newtonsoft.Json.JsonProperty("timeSpentByMe", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TimeSpentByMe { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("timeZoneRuleVersionNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TimeZoneRuleVersionNumber { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityReference Currency { get; set; }
+    
+        /// <summary>For internal use only.</summary>
+        [Newtonsoft.Json.JsonProperty("_Deprecated_TraversedPath", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string _Deprecated_TraversedPath { get; set; }
+    
+        /// <summary>Time zone code that was in use when the record was created.</summary>
+        [Newtonsoft.Json.JsonProperty("utcConversionTimeZoneCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? UtcConversionTimeZoneCode { get; set; }
+    
+        /// <summary>Version number of the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("versionNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? VersionNumber { get; set; }
+    
+        /// <summary>Type the contact's professional or personal website or blog URL.</summary>
+        [Newtonsoft.Json.JsonProperty("website", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Website { get; set; }
+    
+        /// <summary>Type the phonetic spelling of the contact's first name, if the name is specified in Japanese, to make sure the name is pronounced correctly in phone calls with the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("yomiFirstName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YomiFirstName { get; set; }
+    
+        /// <summary>Shows the combined Yomi first and last names of the contact so that the full phonetic name can be displayed in views and reports.</summary>
+        [Newtonsoft.Json.JsonProperty("yomiFullName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YomiFullName { get; set; }
+    
+        /// <summary>Type the phonetic spelling of the contact's last name, if the name is specified in Japanese, to make sure the name is pronounced correctly in phone calls with the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("yomiLastName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YomiLastName { get; set; }
+    
+        /// <summary>Type the phonetic spelling of the contact's middle name, if the name is specified in Japanese, to make sure the name is pronounced correctly in phone calls with the contact.</summary>
+        [Newtonsoft.Json.JsonProperty("yomiMiddleName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string YomiMiddleName { get; set; }
+    
+        /// <summary>1:N account_primary_contact</summary>
+        [Newtonsoft.Json.JsonProperty("account_primary_contact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Account> Account_primary_contact { get; set; }
+    
+        /// <summary>1:N contact_customer_contacts</summary>
+        [Newtonsoft.Json.JsonProperty("referencedcontact_customer_contacts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Contact> Referencedcontact_customer_contacts { get; set; }
+    
+        /// <summary>1:N contact_master_contact</summary>
+        [Newtonsoft.Json.JsonProperty("referencedcontact_master_contact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Contact> Referencedcontact_master_contact { get; set; }
+    
+        /// <summary>1:N contact_parent_contact</summary>
+        [Newtonsoft.Json.JsonProperty("referencedcontact_parent_contact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Contact> Referencedcontact_parent_contact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("contact_customer_accounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Account Contact_customer_accounts { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("referencingcontact_customer_contacts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Contact Referencingcontact_customer_contacts { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("referencingcontact_master_contact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Contact Referencingcontact_master_contact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("referencingcontact_parent_contact", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Contact Referencingcontact_parent_contact { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("logicalName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LogicalName { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> Attributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("entityState", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EntityState EntityState { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("formattedValues", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringStringKeyValuePair> FormattedValues { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("relatedEntities", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<RelationshipEntityCollectionKeyValuePair> RelatedEntities { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("rowVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RowVersion { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("keyAttributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<StringObjectKeyValuePair> KeyAttributes { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hasLazyFileAttribute", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool HasLazyFileAttribute { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ObjectLazy LazyFileAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LazyFileSizeAttributeKey { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lazyFileSizeAttributeValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int LazyFileSizeAttributeValue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensionData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ExtensionDataObject ExtensionData { get; set; }
     
         public string ToJson() 
         {
