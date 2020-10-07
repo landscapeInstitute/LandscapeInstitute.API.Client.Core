@@ -27,7 +27,7 @@
       "generateBaseUrlProperty": true,
       "generateSyncMethods": false,
       "exposeJsonSerializerSettings": false,
-      "clientClassAccessModifier": "internal",
+      "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
       "contractsNamespace": null,

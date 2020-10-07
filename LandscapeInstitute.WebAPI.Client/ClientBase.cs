@@ -26,7 +26,7 @@ namespace LandscapeInstitute.WebAPI.Client
     }
 
     /* Base Class that all Callers Extend, Injects Into a user token when one is found against the caller user */
-    internal abstract class ClientBase
+    public abstract class ClientBase
     {
         /* Called by implementing Swagger Client Caller Classes */
         protected async Task<HttpRequestMessage> CreateHttpRequestMessageAsync(CancellationToken cancellationToken)

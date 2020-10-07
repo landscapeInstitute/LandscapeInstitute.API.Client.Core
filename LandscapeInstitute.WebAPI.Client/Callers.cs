@@ -15,7 +15,7 @@ namespace LandscapeInstitute.WebAPI.Client
     using System = global::System;
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.1.3.0 (NJsonSchema v10.0.27.0 (Newtonsoft.Json v12.0.0.0))")]
-    internal partial class AuthenticationCaller : ClientBase
+    public partial class AuthenticationCaller : ClientBase
     {
         private string _baseUrl = "";
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -397,7 +397,7 @@ namespace LandscapeInstitute.WebAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.1.3.0 (NJsonSchema v10.0.27.0 (Newtonsoft.Json v12.0.0.0))")]
-    internal partial class ContactsCaller : ClientBase
+    public partial class ContactsCaller : ClientBase
     {
         private string _baseUrl = "";
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
