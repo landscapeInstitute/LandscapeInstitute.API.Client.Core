@@ -1,3 +1,5 @@
+![Package Publish](https://github.com/landscapeInstitute/LandscapeInstitute.WebAPI.Client/workflows/Package%20Publish/badge.svg)
+
 # LandscapeInstitute.API.Client.Core
 C# Dotnet Core Client for accessing the LI Swashbuckle API 
 
