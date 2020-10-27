@@ -14,16 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NSwag.CodeGeneration" Version="13.4.2" />
-    <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.4.2" />
-    <PackageReference Include="NSwag.MSBuild" Version="13.1.3" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.4.2" />
+    <PackageReference Include="NSwag.CodeGeneration" Version="13.8.2" />
+    <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.8.2" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NSwag.AspNetCore" Version="13.8.2" />
   </ItemGroup>
 
-  <UsingTask 
-    TaskName="ReplaceFileText" 
-    TaskFactory="RoslynCodeTaskFactory"
-    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+  <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <InputFilename ParameterType="System.String" Required="true" />
       <OutputFilename ParameterType="System.String" Required="true" />

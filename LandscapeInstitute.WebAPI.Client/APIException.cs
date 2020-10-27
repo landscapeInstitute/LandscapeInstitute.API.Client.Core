@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 namespace LandscapeInstitute.WebAPI.Client
 {
 
+    /// <summary>
+    /// The APIException Class is a custom exception class for the API. The API Returns a JSON Object this this class uses 
+    /// </summary>
     public partial class APIException : System.Exception
     {
         public int StatusCode { get; private set; }
