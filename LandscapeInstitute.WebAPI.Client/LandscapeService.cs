@@ -15,7 +15,7 @@ namespace LandscapeInstitute.WebAPI.Client
     /// </summary>
     public interface ILandscapeService
     {
-        public T Call<T>(string baseUrl = null);
+        public T Call<T>();
         public void SetAuthentication(ClientAuthenticationType type, string token);
         public ClientAuthentication GetAuthentication();
     }
@@ -36,8 +36,9 @@ namespace LandscapeInstitute.WebAPI.Client
             _authenticationFilterType = options.Value._authenticationFilterType;
             _authentication = options.Value.Authentication;
 
-            CallerBase.LandscapeService = this;
+            CallerBase.LandscapeService = this;         
             CallerBase.LandscapeServiceOptions = options;
+
             Activator.CreateInstance(_authenticationFilterType);
 
         }
@@ -45,7 +46,7 @@ namespace LandscapeInstitute.WebAPI.Client
         /// <summary>
         /// Call an API Caller
         /// </summary>
-        public T Call<T>(string baseUrl = null)
+        public T Call<T>()
         {
 
             /* Everytime a call is made the method "Appy" of the given filter is run */

@@ -25,6 +25,9 @@ namespace LandscapeInstitute.WebAPI.Client.Example.Controllers
         {
             var contact = await _landscapeService.Call<UnitTestingCaller>().GetContactAsync();
 
+            var app = await _landscapeService.Call<AuthenticationCaller>().AppAsync("32424393249324");
+
+
             return View();
         }
 

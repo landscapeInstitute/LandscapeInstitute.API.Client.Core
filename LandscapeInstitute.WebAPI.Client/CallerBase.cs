@@ -16,11 +16,11 @@ namespace LandscapeInstitute.WebAPI.Client
         public static ILandscapeService LandscapeService;
         public static IOptions<LandscapeServiceOptions> LandscapeServiceOptions;
 
-        public string _baseUrl;
+        private string _baseUrl;
 
-        public CallerBase(string baseUrl = "")
+        public CallerBase()
         {
-            BaseUrl = baseUrl;
+  
         }
 
         public string BaseUrl
@@ -34,7 +34,7 @@ namespace LandscapeInstitute.WebAPI.Client
         {
             var msg = new HttpRequestMessage();
 
-            if(LandscapeService.GetAuthentication() != null)
+            if (LandscapeService.GetAuthentication() != null)
             {
 
                 if(LandscapeService.GetAuthentication().Type == ClientAuthenticationType.AccessToken)
