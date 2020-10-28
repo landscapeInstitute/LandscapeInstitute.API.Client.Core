@@ -50,7 +50,7 @@ namespace LandscapeInstitute.WebAPI.Test
             /* Grab a GUID */
             Assert.IsNotNull(landscapeService.Call<UnitTestingCaller>().GetGuidAsync().Result, "Unable to return a GUID");
 
-
+     
             Assert.Pass();
 
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,10 +11,13 @@ namespace LandscapeInstitute.WebAPI.Client
     public class LandscapeServiceAuthenticationFilter : ILandscapeServiceAuthenticationFilter
     {
 
+        public static ClientAuthenticationType AuthenticationType;
+        public static string token;
+
         public void Apply()
         {
 
-            CallerBase.LandscapeService.SetAuthentication(ClientAuthenticationType.ApiKey, "12345");
+            CallerBase.LandscapeService.SetAuthentication(AuthenticationType, token);
 
         }
 

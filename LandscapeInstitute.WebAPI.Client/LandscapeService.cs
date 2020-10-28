@@ -32,7 +32,7 @@ namespace LandscapeInstitute.WebAPI.Client
         public LandscapeService(IOptions<LandscapeServiceOptions> options)
         {
             _baseUrl = options.Value.BaseUrl;
-            _authenticationFilterType = options.Value.AuthenticationFilterType;
+            _authenticationFilterType = options.Value._authenticationFilterType;
 
             CallerBase.LandscapeService = this;
             CallerBase.LandscapeServiceOptions = options;
@@ -46,6 +46,7 @@ namespace LandscapeInstitute.WebAPI.Client
         public T Call<T>(string baseUrl = null)
         {
 
+            /* Everytime a call is made the method "Appy" of the given filter is run */
             object authenticationFilter = Activator.CreateInstance(_authenticationFilterType);
             MethodInfo method = _authenticationFilterType.GetMethod("Apply", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             method.Invoke(authenticationFilter, null);
@@ -94,10 +95,11 @@ namespace LandscapeInstitute.WebAPI.Client
         /// </summary>
         public void AuthenticationFilter<TFilter>(params object[] arguments) where TFilter : ILandscapeServiceAuthenticationFilter
         {
-            AuthenticationFilterType = typeof(TFilter);
+            _authenticationFilterType = typeof(TFilter);
         }
 
-        public Type AuthenticationFilterType { get; set; }
+        /* Defaults to LandscapeServiceAuthenticationFilter */
+        public Type _authenticationFilterType = typeof(LandscapeServiceAuthenticationFilter);
     }
 
     /// <summary>
