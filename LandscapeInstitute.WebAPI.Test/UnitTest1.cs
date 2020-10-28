@@ -24,8 +24,12 @@ namespace LandscapeInstitute.WebAPI.Test
             };
 
             /* Use our Unit Test Authentication Filter */
-            settings.AuthenticationFilter<LandscapeServiceAuthenticationFilterUnitTest>();
-
+            settings.Authentication = new ClientAuthentication()
+            {
+                Type = ClientAuthenticationType.ApiKey,
+                Token = "12345"
+            };
+                
             /* Create IOptions */
             IOptions<LandscapeServiceOptions> landscapeServiceOptions = Options.Create(settings);
 
@@ -34,15 +38,9 @@ namespace LandscapeInstitute.WebAPI.Test
 
         }
 
-
-
-
         [Test]
         public void GuesUnitTests()
         {
-            /* Perform Tests as a Guest */
-
-            LandscapeServiceAuthenticationFilterUnitTest.SetAuthentication(ClientAuthenticationType.Guest, null);
 
             /* Can we grab a contact */
             Assert.IsNotNull(landscapeService.Call<UnitTestingCaller>().GetContactAsync().Result, "Unable to return a contact record");
@@ -58,10 +56,6 @@ namespace LandscapeInstitute.WebAPI.Test
         [Test]
         public void AdminUnitTests()
         {
-
-            /* Perform Tests as an Admin */
-            LandscapeServiceAuthenticationFilterUnitTest.SetAuthentication(ClientAuthenticationType.ApiKey, "12345");
-
 
             Assert.IsTrue(landscapeService.Call<UnitTestingCaller>().IsAdminAsync().Result);
 

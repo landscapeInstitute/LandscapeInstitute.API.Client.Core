@@ -12,12 +12,12 @@ namespace LandscapeInstitute.WebAPI.Client
     {
 
         public static ClientAuthenticationType AuthenticationType;
-        public static string token;
+        public static string Token;
 
         public void Apply()
         {
 
-            CallerBase.LandscapeService.SetAuthentication(AuthenticationType, token);
+            CallerBase.LandscapeService.SetAuthentication(AuthenticationType, Token);
 
         }
 

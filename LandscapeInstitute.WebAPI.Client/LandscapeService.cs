@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace LandscapeInstitute.WebAPI.Client
         {
             _baseUrl = options.Value.BaseUrl;
             _authenticationFilterType = options.Value._authenticationFilterType;
+            _authentication = options.Value.Authentication;
 
             CallerBase.LandscapeService = this;
             CallerBase.LandscapeServiceOptions = options;
@@ -48,6 +50,14 @@ namespace LandscapeInstitute.WebAPI.Client
 
             /* Everytime a call is made the method "Appy" of the given filter is run */
             object authenticationFilter = Activator.CreateInstance(_authenticationFilterType);
+
+            /* If Using Static Authentication Rather than a filter */
+            if (_authentication != null)
+            {
+                LandscapeServiceAuthenticationFilter.AuthenticationType = _authentication.Type;
+                LandscapeServiceAuthenticationFilter.Token = _authentication.Token;
+            }
+
             MethodInfo method = _authenticationFilterType.GetMethod("Apply", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             method.Invoke(authenticationFilter, null);
 
@@ -100,6 +110,10 @@ namespace LandscapeInstitute.WebAPI.Client
 
         /* Defaults to LandscapeServiceAuthenticationFilter */
         public Type _authenticationFilterType = typeof(LandscapeServiceAuthenticationFilter);
+
+        /* If using a static authentication in startup */
+        public ClientAuthentication Authentication { get; set; }
+
     }
 
     /// <summary>
