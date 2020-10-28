@@ -63,8 +63,6 @@ namespace LandscapeInstitute.WebAPI.Client
 
             return (T)Activator.CreateInstance(typeof(T), args: _baseUrl);
 
-            }
-
         }
 
         /// <summary>

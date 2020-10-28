@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using LandscapeInstitute.WebAPI.Client;
@@ -23,7 +18,18 @@ namespace LandscapeInstitute.WebAPI.Client.Example
             services.AddLandscapeService(options =>
             {
                 options.BaseUrl = "https://dev-api.landscapeinstitute.org";
-                options.AuthenticationFilter<LandscapeServiceAuthenticationFilter>();  
+    
+            });
+
+            /* Add Instance Landscape Service */
+            services.AddLandscapeService(options =>
+            {
+                options.BaseUrl = "https://dev-api.landscapeinstitute.org";
+                options.Authentication = new ClientAuthentication()
+                {
+                    Token = "12345",
+                    Type = ClientAuthenticationType.ApiKey
+                };
             });
 
         }
