@@ -58,6 +58,7 @@ namespace LandscapeInstitute.WebAPI.Test
         {
 
             Assert.IsTrue(landscapeService.Call<UnitTestingCaller>().IsAdminAsync().Result);
+            Assert.IsNotNull(landscapeService.Call<AuthenticationCaller>().AppAsync("32424393249324").Result);
 
             /* Can we grab a contact */
             Assert.IsNotNull(landscapeService.Call<UnitTestingCaller>().GetContactAsync().Result, "Unable to return a contact record");

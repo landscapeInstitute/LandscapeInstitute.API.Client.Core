@@ -62,6 +62,9 @@ namespace LandscapeInstitute.WebAPI.Client
             method.Invoke(authenticationFilter, null);
 
             return (T)Activator.CreateInstance(typeof(T), args: _baseUrl);
+
+            }
+
         }
 
         /// <summary>

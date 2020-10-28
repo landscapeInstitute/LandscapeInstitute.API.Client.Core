@@ -12,6 +12,8 @@
     <PackageDescription>An internal client for the Landscape Institute API for use in various websites </PackageDescription>
     <RepositoryUrl>https://github.com/landscapeInstitute/LandscapeInstitute.WebAPI.Client</RepositoryUrl>
     <PackageIcon>icon.png</PackageIcon>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
