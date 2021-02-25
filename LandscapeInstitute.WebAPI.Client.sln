@@ -7,26 +7,33 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LandscapeInstitute.WebAPI.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LandscapeInstitute.WebAPI.Client.Example", "LandscapeInstitute.WebAPI.Client.Example\LandscapeInstitute.WebAPI.Client.Example.csproj", "{26A89816-5BC1-4005-BEC8-780AADEB9769}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LandscapeInstitute.WebAPI.Test", "LandscapeInstitute.WebAPI.Test\LandscapeInstitute.WebAPI.Test.csproj", "{6AB2E748-6E70-4B90-8DCC-9138EA608B97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LandscapeInstitute.WebAPI.Test", "LandscapeInstitute.WebAPI.Test\LandscapeInstitute.WebAPI.Test.csproj", "{6AB2E748-6E70-4B90-8DCC-9138EA608B97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		ReSwag|Any CPU = ReSwag|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}.ReSwag|Any CPU.ActiveCfg = ReSwag|Any CPU
+		{1C0F4A39-62C9-400D-B2F6-A03F2183EF0E}.ReSwag|Any CPU.Build.0 = ReSwag|Any CPU
 		{26A89816-5BC1-4005-BEC8-780AADEB9769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26A89816-5BC1-4005-BEC8-780AADEB9769}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26A89816-5BC1-4005-BEC8-780AADEB9769}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26A89816-5BC1-4005-BEC8-780AADEB9769}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A89816-5BC1-4005-BEC8-780AADEB9769}.ReSwag|Any CPU.ActiveCfg = ReSwag|Any CPU
+		{26A89816-5BC1-4005-BEC8-780AADEB9769}.ReSwag|Any CPU.Build.0 = ReSwag|Any CPU
 		{6AB2E748-6E70-4B90-8DCC-9138EA608B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6AB2E748-6E70-4B90-8DCC-9138EA608B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AB2E748-6E70-4B90-8DCC-9138EA608B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AB2E748-6E70-4B90-8DCC-9138EA608B97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AB2E748-6E70-4B90-8DCC-9138EA608B97}.ReSwag|Any CPU.ActiveCfg = ReSwag|Any CPU
+		{6AB2E748-6E70-4B90-8DCC-9138EA608B97}.ReSwag|Any CPU.Build.0 = ReSwag|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

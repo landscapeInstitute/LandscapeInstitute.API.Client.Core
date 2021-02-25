@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GenerateCode>True</GenerateCode>
     <Authors>Louis Varley</Authors>
     <Company>Landscape Institute</Company>
     <Build>$([System.DateTime]::op_Subtraction($([System.DateTime]::get_Now().get_Date()),$([System.DateTime]::new(2000,1,1))).get_TotalDays())</Build>
@@ -14,23 +13,24 @@
     <PackageIcon>icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Configurations>Debug;Release;Rebuild;ReSwag</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NSwag.CodeGeneration" Version="13.8.2" />
-    <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.8.2" />
-    <PackageReference Include="NSwag.MSBuild" Version="13.8.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="NSwag.AspNetCore" Version="13.8.2" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSwag.AspNetCore" Version="13.10.6" />
+    <PackageReference Include="NSwag.CodeGeneration" Version="13.10.6" />
+    <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.10.6" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.10.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <UsingTask TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
@@ -56,20 +56,24 @@
     </Task>
   </UsingTask>
 
-  <Target Name="RemoveGenerateSources" BeforeTargets="CoreClean" Condition="'$(GenerateCode)'=='True' ">
+  <Target Name="RemoveGeneratedCallers" BeforeTargets="CoreClean" Condition="'$(Configuration)'=='ReSwag'">
     <Delete Files="Callers.cs" />
   </Target>
 
-  <Target Name="NSwag" BeforeTargets="PrepareForBuild" Condition="'$(GenerateCode)'=='True' ">
+  <Target Name="NSwag" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)'=='ReSwag'">
     <Exec Command="$(NSwagExe_Core30) run api.nswag /variables:Configuration=$(Configuration)" />
   </Target>
 
-  <Target Name="CallerReplaceDisallowNull" BeforeTargets="PrepareForBuild" Condition="'$(GenerateCode)'=='True' ">
+  <Target Name="CallerReplaceDisallowNull" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)'=='ReSwag'">
     <ReplaceFileText InputFilename="Callers.cs" OutputFilename="Callers.cs" MatchExpression="Newtonsoft.Json.Required.DisallowNull" ReplacementText="Newtonsoft.Json.Required.Default" />
   </Target>
 
-  <Target Name="CallerReplaceManifest" BeforeTargets="PrepareForBuild" Condition="'$(GenerateCode)'=='True' ">
+  <Target Name="CallerReplaceManifest" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)'=='ReSwag'">
     <ReplaceFileText InputFilename="Callers.cs" OutputFilename="Callers.cs" MatchExpression="Manifest.json" ReplacementText="ManifestJson" />
+  </Target>
+
+  <Target Name="Exit" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)'=='ReSwag'">
+    <Message Text="Build ended because special condition occured" />
   </Target>
 
 </Project>
