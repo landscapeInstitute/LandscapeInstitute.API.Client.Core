@@ -27,8 +27,8 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
       
-    - name: Setup Nuget.exe
-      uses: warrenbuckley/Setup-Nuget@v1
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.5
        
     - name: Add GitHub Nuget Registry as Source
       run: dotnet nuget add source https://nuget.pkg.github.com/landscapeInstitute/index.json -n github -u landscapeInstitute -p ${{secrets.GITHUB_TOKEN}}       
